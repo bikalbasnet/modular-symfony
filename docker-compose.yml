@@ -1,0 +1,38 @@
+version: "3.9"
+
+networks:
+  default:
+    name: 'co_network'
+
+services:
+  co_app:
+    image: webdevops/php-nginx-dev:8.1
+    container_name: co_app
+    volumes:
+      - ./:/app
+      - ~/.composer/cache/:/home/application/.composer/cache/
+    ports:
+      - "80:80"
+    working_dir: /app
+    environment:
+      - WEB_DOCUMENT_ROOT=/app/public
+      - WEB_ALIAS_DOMAIN=checkout.local
+
+  co_redis:
+    image: redis
+    container_name: co_redis
+    expose:
+      - 6379
+    ports:
+      - "6380:6379"
+
+  co_db:
+    image: mysql:8
+    container_name: co_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ROOT_1234
+      MYSQL_DATABASE: coredb
+      MYSQL_USER: kael
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3306:3306"
